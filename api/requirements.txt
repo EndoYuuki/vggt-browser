@@ -1,0 +1,10 @@
+# api is torch-free: numpy only for array handling.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+redis==5.2.1
+rq==2.1.0
+numpy<2
+Pillow==11.1.0
+PyYAML==6.0.2
+matplotlib==3.10.0

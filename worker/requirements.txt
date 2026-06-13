@@ -1,0 +1,14 @@
+# torch/torchvision come from the CUDA base image; do not reinstall them here.
+# VGGT runtime deps (mirrors vggt's pyproject, minus torch):
+numpy<2
+Pillow
+huggingface_hub
+einops
+safetensors
+opencv-python-headless
+# job queue + config
+redis==5.2.1
+rq==2.1.0
+PyYAML==6.0.2
+# GLB export
+trimesh==4.5.3

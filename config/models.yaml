@@ -1,0 +1,35 @@
+# Model registry. Both `api` (dropdown + cap clamping) and `worker` (loading) read this.
+# caps tuned for a 24GB-class GPU (RTX 4090). Adjust per deployment GPU.
+default: vggt-1b
+
+models:
+  vggt-1b:
+    adapter: vggt                 # -> VGGTAdapter
+    hf_repo: facebook/VGGT-1B
+    gated: false                  # public repo: no HF token needed
+    dtype: bfloat16
+    # "depth" = unproject depth+camera (paper-recommended, higher accuracy);
+    # "pointmap" = the model's direct world_points head. UI can override per-job.
+    point_source: depth
+    display_name: "VGGT 1B"
+    description: "Multi-view feed-forward reconstruction (cameras, depth, point map)."
+    caps:
+      max_frames: 64
+      default_frames: 24
+      recommended_resolution: 518
+      max_resolution: 518
+
+  vggt-omega-512:
+    adapter: vggt_omega           # -> VGGTOmegaAdapter
+    hf_repo: facebook/VGGT-Omega
+    checkpoint_filename: vggt_omega_1b_512.pt
+    image_resolution: 512
+    gated: true
+    dtype: bfloat16
+    display_name: "VGGT-Omega 1B (512)"
+    description: "Improved static/dynamic reconstruction. Accepts images or video."
+    caps:
+      max_frames: 48
+      default_frames: 16
+      recommended_resolution: 512
+      max_resolution: 512

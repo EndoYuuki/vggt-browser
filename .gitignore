@@ -1,0 +1,16 @@
+.env
+data/
+__pycache__/
+*.pyc
+.venv/
+.venv-test/
+venv/
+node_modules/
+web/dist/
+web/tsconfig.tsbuildinfo
+*.npz
+*.glb
+samples/*.jpg
+samples/*.png
+!samples/.gitkeep
+.DS_Store

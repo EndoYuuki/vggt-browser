@@ -1,0 +1,66 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - UPLOADS_DIR=/uploads
+      - RESULTS_DIR=/results
+      - MODELS_CONFIG=/config/models.yaml
+    volumes:
+      - uploads:/uploads
+      - results:/results
+      - ./config:/config:ro
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - UPLOADS_DIR=/uploads
+      - RESULTS_DIR=/results
+      - MODELS_CONFIG=/config/models.yaml
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-}
+      - WARM_DEFAULT_MODEL=${WARM_DEFAULT_MODEL:-1}
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+    volumes:
+      - uploads:/uploads
+      - results:/results
+      - ./config:/config:ro
+      - hf-cache:/root/.cache/huggingface
+    depends_on:
+      - redis
+    # nvidia is the default runtime on the target host; reserve one GPU.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  uploads:
+  results:
+  hf-cache:

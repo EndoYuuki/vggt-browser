@@ -1,0 +1,8 @@
+# GPU smoke test: run one forward pass instead of the RQ worker loop.
+#   docker compose -f docker-compose.yml -f docker-compose.smoke.yml run --rm worker
+services:
+  worker:
+    command: ["python", "-m", "worker.smoke_test"]
+    volumes:
+      # Mount host samples so you can drop test images without rebuilding.
+      - ./samples:/app/samples:ro
